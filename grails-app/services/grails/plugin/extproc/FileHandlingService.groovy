@@ -30,7 +30,7 @@ class FileHandlingService {
 	
 	
 	public void delDirectory(File path) {
-		log.info "deleting directory $path"
+		if (log.isInfoEnabled()) log.info "deleting directory $path"
 		File cur = path
 		if (cur.exists() ) {
 			if (cur.isDirectory())
@@ -39,14 +39,14 @@ class FileHandlingService {
 					if (f.isDirectory()) {
 						delDirectory(f)
 					}
-					log.debug "del file ${f.absolutePath}"
+					if (log.isDebugEnabled()) log.debug "del file ${f.absolutePath}"
 					assert f.delete()
 				}
-			log.debug "--- $cur ---"
+			if (log.isDebugEnabled()) log.debug "--- $cur ---"
 			assert cur.delete()
 		}
 		else
-			log.error "$path does not exist"
+			if (log.isErrorEnabled()) log.error "$path does not exist"
 	}
 
 	File fileInTemp(File temp, String name) {
@@ -57,7 +57,7 @@ class FileHandlingService {
 		// create temp dir
 		File temp
 		try {
-			log.debug "generating new temp dir"
+			if (log.isDebugEnabled()) log.debug "generating new temp dir"
 			if (!path) {
 				temp = File.createTempFile("ext-proc", Long.toString(System.nanoTime()))
 				temp.delete()
@@ -68,10 +68,10 @@ class FileHandlingService {
 				if (!temp.exists() || !temp.isDirectory())
 					throw new Exception("Path $path does not exist or is not a directory!")
 				else
-					log.info "temp $path existed."
+					if (log.isDebugEnabled()) log.debug "temp $path existed."
 			}
 			if (temp.exists() && temp.isDirectory()) {
-				log.info "temp dir created: ${temp}"
+				if (log.isDebugEnabled()) log.debug "temp dir created: ${temp}"
 			}
 
 		} catch(Exception ex) {
@@ -115,16 +115,14 @@ class FileHandlingService {
 		long total = 0
 
 		while ((bis.available()) != 0) {
-			log.trace "reading ... "
+			if (log.isTraceEnabled()) log.trace "reading ... "
 			int bytesRead = bis.read(buf, 0, BUFFER)
 			if (bytesRead > 0) {
-				log.trace "read $bytesRead bytes"
 				fos.write(buf, 0, bytesRead);
 				total += bytesRead
-				log.trace "total is $total"
 			}
 		}
-		log.debug "dumped $fn from zip to $output, size is $total"
+		if (log.isDebugEnabled()) log.debug "dumped $fn from zip to $output, size is $total"
 		fos.flush();
 		fos.close();
 	}
@@ -142,9 +140,8 @@ class FileHandlingService {
 			if (allowedByClosure)
 				dumpZipFileEntry(zis, entry, path)
 			else
-				log.info "not allowed $fn in input - skipped"
+				if (log.isInfoEnabled()) log.info "not allowed $fn in input - skipped"
 		}
-
 	}
 
 	void unzipFileToDir(File file, File path, Closure c) {
@@ -171,7 +168,7 @@ class FileHandlingService {
 				return dest.toByteArray();
 			}
 			catch (java.util.zip.ZipException zex) {
-				log.error "zipDirInclude: $zex, returning null"
+				if (log.isErrorEnabled()) log.error "zipDirInclude: $zex, returning null"
 				return null
 			}
 
@@ -182,10 +179,10 @@ class FileHandlingService {
 
 	void addDirectoryToZip(ZipOutputStream zip, File path, Closure c) {
 		final String METHOD_NAME = "addDirectoryToZip -"
-		log.debug "$METHOD_NAME path is: ${path.absolutePath}"
+		if (log.isDebugEnabled()) log.debug "$METHOD_NAME path is: ${path.absolutePath}"
 
 		def files = path.list().toList()
-		log.debug "$METHOD_NAME files are: ${files}"
+		if (log.isDebugEnabled()) log.debug "$METHOD_NAME files are: ${files}"
 
 		byte[] data = new byte[BUFFER];
 		if (files)
@@ -197,7 +194,7 @@ class FileHandlingService {
 					if (!file.toString().startsWith(".")) {
 						if (!file.isDirectory()) {
 							def b= new FileInputStream(file).getBytes();
-							log.info "$METHOD_NAME Adding file to result zip: $file, size is ${b.size()}"
+							if (log.isInfoEnabled()) log.info "$METHOD_NAME Adding file to result zip: $file, size is ${b.size()}"
 
 							ByteArrayInputStream fi = new ByteArrayInputStream(b);
 							def origin = new BufferedInputStream(fi, BUFFER);
@@ -215,10 +212,9 @@ class FileHandlingService {
 						}
 					}
 				} else {
-					log.debug "$METHOD_NAME skipped $filename"
+					if (log.isDebugEnabled()) log.debug "$METHOD_NAME skipped $filename"
 				}
 			}
 	}
-
 }
 

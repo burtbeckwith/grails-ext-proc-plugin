@@ -8,19 +8,40 @@ import grails.plugin.extproc.ExternalProcessResult;
 import java.util.regex.Pattern
 import com.grails.cxf.client.*
 
+/**
+ * @author hennito henne.lohse@gmail.com
+ * 
+ *  ExternalProcessService - Service to handle the invokation of external processes
+ *  
+ */
+
 class ExternalProcessService {
 	static expose = ['cxf']
 	static exclude = ["invokeRemote","invokeLocal"]
 	
 	def fileHandlingService
-	def webServiceClientFactory
+	def webServiceClientFactory // from cxf-client
 
 	static transactional = true
 
+	/**
+	 * Invoke the external process referenced to by name with the specified input.
+	 * An error is indicated by a serviceReturn on the return object that evaluates to true.
+	 * Remote Processes are invoked via webservice and the cxf-client.
+	 * This method is exposed as a webservice via the cxf plugin.
+	 * 
+	 * @param name the name attribute of the instance of ExternalProcess
+	 * @param input the input 
+	 * @return ExternalProcessResult 
+	 * 
+	 * @see ExternalProcess
+	 * @see ExternalProcessInput
+	 * @see ExternalProcessResult
+	 */
+		
 	ExternalProcessResult executeProcess(String name, ExternalProcessInput input) {
 		final String METHOD_NAME = "executeProcess() - "
-		log.trace "$METHOD_NAME entering ..."
-		log.info "$METHOD_NAME process name is $name"
+		if (log.isInfoEnabled()) log.info "$METHOD_NAME process name is $name"
 		ExternalProcess process = ExternalProcess.findByName(name)
 		
 		if (process)
@@ -39,12 +60,12 @@ class ExternalProcessService {
 		def result
 
 		final String METHOD_NAME = "invokeRemote() - "
-		log.info "$METHOD_NAME process is $process"
-		log.debug "$METHOD_NAME input is $input"
+		if (log.isInfoEnabled()) log.info "$METHOD_NAME process is $process"
+		if (log.isDebugEnabled()) log.debug "$METHOD_NAME input is $input"
 		
 		def (command, url) = process.command.split("@")
-		log.info "remote command is $command"
-		log.info "remote url is $url"
+		if (log.isDebugEnabled()) log.debug "remote command is $command"
+		if (log.isDebugEnabled()) log.debug "remote url is $url"
 
 		DynamicWebServiceClient client = new DynamicWebServiceClient(
 				clientInterface: grails.plugin.extproc.remote.ExternalProcessServicePortType,
@@ -55,27 +76,8 @@ class ExternalProcessService {
 				password: "${input.token}",
 				webServiceClientFactory: webServiceClientFactory)
 		
+		def webserviceObject = client.object
 	
-
-/*
-		Object webServiceClient = webServiceClientFactory.getWebServiceClient(
-			grails.plugin.extproc.remote.ExternalProcessServicePortType, 
-			"$command", 
-			"$url", 
-			false, 
-			"testUser", 
-			"testPassword"
-		)
-		
-	*/	
-		
-	def webserviceObject = client.object
-	log.info "webserviceObject : $webserviceObject"
-	
-	log.info webServiceClientFactory.interfaceMap
-		
-		log.info "wsClient is $client"
-		
 		grails.plugin.extproc.remote.ExternalProcessInput wrappedInput = 
 			new grails.plugin.extproc.remote.ExternalProcessInput(
 				user:input.user,
@@ -85,17 +87,15 @@ class ExternalProcessService {
 				zippedWorkDir:input.zippedWorkDir
 			)
 		
-		 
 		result = webserviceObject.executeProcess(command, wrappedInput)
-//	
-		
+
 		grails.plugin.extproc.ExternalProcessResult wrappedResult = 
-		new grails.plugin.extproc.ExternalProcessResult(
-			returnCode:result.returnCode,
-			consoleLog:result.consoleLog,
-			zippedDir:result.zippedDir,
-			serviceReturn:result.serviceReturn
-		)
+			new grails.plugin.extproc.ExternalProcessResult(
+				returnCode:result.returnCode,
+				consoleLog:result.consoleLog,
+				zippedDir:result.zippedDir,
+				serviceReturn:result.serviceReturn
+			)
 		
 		return wrappedResult	
 	}
@@ -233,7 +233,6 @@ class ExternalProcessService {
 
 			log.debug "$METHOD_NAME worker started"
 
-			boolean timedOut = false
 			try {
 				if (process.timeout) {
 					log.debug "$METHOD_NAME setting timeout to ${process.timeout}"

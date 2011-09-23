@@ -1,6 +1,7 @@
 class ExtProcUrlMappings {
 
 	static mappings = {
+		/*
 		"/extproc/$action?/$id?"{
 			controller = "externalProcess"
 			action = action?:"list"
@@ -9,7 +10,7 @@ class ExtProcUrlMappings {
 				// apply constraints here
 			}
 		}
-		
+		*/
 		"/$controller/$action?/$id?"{		
 			constraints {
 				

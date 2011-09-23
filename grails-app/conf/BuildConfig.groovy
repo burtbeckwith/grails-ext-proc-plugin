@@ -3,7 +3,7 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
-grails.plugin.location.'cxf-client' = "../../../dev/cxf-client"
+//grails.plugin.location.'cxf-client' = "../../../dev/cxf-client"
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -29,6 +29,9 @@ grails.project.dependency.resolution = {
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
+		//build('my.groupId:myArtifactId:1.1-SNAPSHOT'){
+		//	excludes "logback-classic", "jul-to-slf4j"
+		// }
         plugins {
 			runtime ':jquery:1.5.2'
 			runtime ':cxf:0.7.0'			
