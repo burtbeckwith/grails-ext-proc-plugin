@@ -31,7 +31,7 @@ log4j = {
 
     warn   'org.mortbay.log'
 	
-	all 'grails.plugin.extproc',
+	info 'grails.plugin.extproc',
 		'extproc'
 	
 }
@@ -68,3 +68,5 @@ cxf {
 	}
 }
 
+grails.views.default.codec="none" // none, html, base64
+grails.views.gsp.encoding="UTF-8"

@@ -2,15 +2,14 @@ class ExtProcGrailsPlugin {
     // the plugin version
     def version = "0.1"
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "1.2.2 > *"
+    def grailsVersion = "1.3.5 > *" // cxf has 1.3.5
     // the other plugins this plugin depends on
-    def dependsOn = [:]
+    def dependsOn = [:] // defined in BuildConfig
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
             "grails-app/views/error.gsp"
     ]
 
-    // TODO Fill in these fields
     def author = "Henrik Lohse"
     def authorEmail = "henne.lohse@gmail.com"
     def title = "External Processes Plugin"
@@ -25,8 +24,8 @@ installation of the external process and use them from your application remotely
 '''
 
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/ext-proc"
-
+    //def documentation = "http://grails.org/plugin/ext-proc"
+	def documentation = "https://github.com/hennito/grails-ext-proc-plugin/blob/master/README"
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before 
     }

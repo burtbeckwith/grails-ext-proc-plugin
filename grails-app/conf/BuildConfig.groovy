@@ -3,8 +3,6 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
-//grails.plugin.location.'cxf-client' = "../../../dev/cxf-client"
-
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -20,7 +18,7 @@ grails.project.dependency.resolution = {
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
         //mavenLocal()
-        //mavenCentral()
+        mavenCentral()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
@@ -32,10 +30,12 @@ grails.project.dependency.resolution = {
 		//build('my.groupId:myArtifactId:1.1-SNAPSHOT'){
 		//	excludes "logback-classic", "jul-to-slf4j"
 		// }
-        plugins {
-			runtime ':jquery:1.5.2'
-			runtime ':cxf:0.7.0'			
-		//	runtime ':cxf-client:0.3'
-		}
     }
+	
+	plugins {
+		runtime ':jquery:1.6.1'
+		runtime ':cxf:0.7.0'
+		runtime ':cxf-client:1.1'
+	}
+
 }
